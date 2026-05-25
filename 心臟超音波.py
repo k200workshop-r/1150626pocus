@@ -7,7 +7,7 @@ import time
 # ========================================================
 st.set_page_config(page_title="POCUS x AI 工作坊-心臟超音波", layout="centered")
 
-st.title("POCUS x AI-工作坊心力交瘁")
+st.title("POCUS x AI-工作坊-心力交瘁")
 st.caption("【Schwallware Ultrasound Simulator x Apache Neo P42 / C62】")
 
 # ========================================================
