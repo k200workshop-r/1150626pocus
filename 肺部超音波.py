@@ -4,9 +4,9 @@ import time
 # ========================================================
 # 1. 網頁前端介面設定 (UI)
 # ========================================================
-st.set_page_config(page_title="POCUS 肺部超音波 AI 模擬判讀站", layout="centered")
+st.set_page_config(page_title="POCUS x AI-肺部超音波", layout="centered")
 
-st.title("POCUS x AI-肺部超音波")
+st.title("POCUS x AI-氣急攻心)
 st.caption("【Lung Ultrasound Training Model x Apache Neo L154 / C62】")
 
 # ========================================================
