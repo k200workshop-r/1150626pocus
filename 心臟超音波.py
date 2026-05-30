@@ -96,7 +96,7 @@ with tab2:
 
     # 邏輯分流：如果教師有上傳真實多圖，且學員沒傳檔案，就啟用教師的真實教材
     if teacher_files and not uploaded_file:
-        st.session_state["CV Aiden"] = "real_files"
+        st.session_state["CV mock"] = "real_files"
         
         # 讓教師能用下拉選單挑選當前要放映與判讀哪一個教材
         file_names = [f.name for f in teacher_files]
@@ -117,10 +117,10 @@ with tab2:
             st.image(img, caption=f"教師標準教材：{ICM真實範例}", use_container_width=True)
 
     # 處理文字模擬備援的顯示邏輯
-    elif st.session_state.get("CV", "") in ["ICM範例影片", "ICM範例圖片"] and not uploaded_file:
+    elif st.session_state.get("CV mock", "") in ["ICM範例影片", "ICM範例圖片"] and not uploaded_file:
         display_simulated_info = True
         st.write("## 📊 教師示範教材（去識別化真實案例）")
-        if st.session_state["CV"] == "ICM範例影片":
+        if st.session_state["CV mock"] == "ICM範例影片":
             display_simulated_info = "ICM範例影片"
             st.info("📺 **[動態影片模擬中]** 畫面上正在流暢播放 Ischemic CM 心尖四腔室影片：可觀察到前壁與心尖 Akinesis（死寂），而基底部代償性 Hyperkinesis 劇烈收縮。")
         else:
