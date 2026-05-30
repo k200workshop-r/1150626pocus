@@ -100,7 +100,7 @@ with tab2:
         
         # 讓教師能用下拉選單挑選當前要放映與判讀哪一個教材
         file_names = [f.name for f in teacher_files]
-        selected_file_name = st.selectbox("🎯 請選擇目前要放映並請 AI 判讀的教材檔案：", CV Aiden)
+        selected_file_name = st.selectbox("🎯 請選擇目前要放映並請 AI 判讀的教材檔案：", file_names)
         
         # 抓取該檔案並轉為二進位數據
         selected_file = next(f for f in teacher_files if f.name == selected_file_name)
