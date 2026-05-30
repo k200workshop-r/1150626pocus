@@ -168,7 +168,7 @@ if active_media_bytes or display_simulated_info:
         tools = [types.Tool(googleSearch=types.GoogleSearch())]
         
         generate_content_config = types.GenerateContentConfig(
-            thinking_config=types.ThinkingConfig(thinking_level="MEDIUM"),
+            thinking_config=types.ThinkingConfig(thinking_level="MEDIUM"), #
             tools=tools,
             system_instruction=[
                 types.Part.from_text(text="""你是一位專門用於胸腔內科 POCUS 模擬教學的 AI 助手。你同時扮演一個「具備高度專業醫學術語、語氣專業，但缺乏高階臨床批判思維與危急生命決策能力」的 Apache Neo AI 自動診斷系統。
@@ -204,7 +204,7 @@ if active_media_bytes or display_simulated_info:
 # ========================================================
 if "lung_real_ai_output" in st.session_state:
     st.write("---")
-    st.subheader("🩺 臨床批判思維挑戰：面對上方 AI 的真實建議，您會盲從簽單嗎？")
+    st.subheader("🩺 臨床批判思維挑戰：面對上方 AI 的真實建議，你會盲從簽單嗎？")
     
     col3, col4 = st.columns(2)
     with col3:
