@@ -87,7 +87,7 @@ with tab2:
     )
     
     st.write("---")
-    st.write("📦 **快捷模擬教材（免備檔方案）：**")
+    st.write("📦 **教師快捷載入教材區：**")
     col_btn1, col_btn2 = st.columns(2)
     with col_btn1:
         if st.button("🎬 快速載入：氣胸動態影片模擬分析"):
