@@ -51,6 +51,7 @@ active_media_bytes = None
 active_mime_type = None
 display_simulated_info = False
 
+# --- 通道 1：學員現場實測上傳 ---
 with tab1:
     st.write("學員請上傳 Schallware 模擬器上的Ischemic CM錄影（MP4/MOV）或截圖（JPG/PNG）")
     uploaded_file = st.file_uploader(
@@ -62,7 +63,6 @@ with tab1:
         active_media_bytes = uploaded_file.read()
         active_mime_type = uploaded_file.type
         
-        # 前端檢視/播放
         st.write("## 📊 畫面檢視中")
         file_ext = uploaded_file.name.split(".")[-1].lower()
         if file_ext in ["mp4", "avi", "mov"]:
@@ -71,50 +71,70 @@ with tab1:
             image = Image.open(uploaded_file)
             st.image(image, use_container_width=True)
 
+# --- 通道 2：老師標準教材（升級為多檔案/多圖支援） ---
 with tab2:
     st.write("💡 現場專用功能：若學員切不出來，老師可點擊按鈕直接載入預備好的標準 ICM 教材：")
+
+    # 允許多選上傳
+    teacher_files = st.file_uploader(
+        "上傳老師準備的示範影像（可選多張圖片與影片）...", 
+        type=["jpg", "png", "jpeg", "mp4", "avi", "mov"],
+        accept_multiple_files=True,
+        key="teacher_upload"
+    )
+    
+    # 快捷免備檔方案（若現場沒準備任何檔案，仍能透過文字備援引導 AI）
+    st.write("---")
+    st.write("📦 **快捷模擬教材（免備檔方案）：**")
     col_btn1, col_btn2 = st.columns(2)
     with col_btn1:
-        if st.button("🎬 載入教師準備：Ischemic CM 真實動態影片"):
-            st.session_state["teacher_media"] = "video"
+        if st.button("🎬 快速載入：Ischemic CM 動態影片模擬分析"):
+            st.session_state["heart_teacher_mode"] = "mock_video"
     with col_btn2:
-        if st.button("🖼️ 載入老師準備：Ischemic CM 經典靜態截圖"):
-            st.session_state["teacher_media"] = "image"
+        if st.button("🖼️ 快速載入：Ischemic CM 靜態截圖模擬分析"):
+            st.session_state["heart_teacher_mode"] = "mock_image"
 
-    # 如果觸發了老師教材按鈕，且學員沒有自己上傳檔案，就啟用備援教材
-    if "teacher_media" in st.session_state and not uploaded_file:
-        display_simulated_info = True
-        st.write("## 📊 老師示範教材播放中")
+    # 邏輯分流：如果教師有上傳真實多圖，且學員沒傳檔案，就啟用教師的真實教材
+    if teacher_files and not uploaded_file:
+        st.session_state["heart_teacher_mode"] = "real_files"
         
-        # 💡 備註：工作坊當天若要把真實檔案當教材，只需把影片命名為 'icm_demo.mp4' 或圖片為 'icm_demo.jpg' 放到與此.py檔同資料夾即可自動讀取直接送給 AI 分析！
-        if st.session_state["teacher_media"] == "video":
-            if os.path.exists("icm_demo.mp4"):
-                with open("icm_demo.mp4", "rb") as f:
-                    active_media_bytes = f.read()
-                active_mime_type = "video/mp4"
-                st.video("icm_demo.mp4")
-            else:
-                display_simulated_info = "text_video"
-                st.info("📺 **[動態影片模擬中]** 畫面上正播放 Ischemic CM 心尖四腔室影片。")
+        # 讓教師能用下拉選單挑選當前要放映與判讀哪一個教材
+        file_names = [f.name for f in teacher_files]
+        selected_file_name = st.selectbox("🎯 請選擇目前要放映並請 AI 判讀的教材檔案：", file_names)
+        
+        # 抓取該檔案並轉為二進位數據
+        selected_file = next(f for f in teacher_files if f.name == selected_file_name)
+        active_media_bytes = selected_file.read()
+        active_mime_type = selected_file.type
+        
+        # 前端即時顯示選中的畫面
+        st.write("## 📊 教師選定之教材放映中")
+        f_ext = selected_file.name.split(".")[-1].lower()
+        if f_ext in ["mp4", "avi", "mov"]:
+            st.video(selected_file)
         else:
-            if os.path.exists("icm_demo.jpg"):
-                with open("icm_demo.jpg", "rb") as f:
-                    active_media_bytes = f.read()
-                active_mime_type = "image/jpeg"
-                st.image("icm_demo.jpg", use_container_width=True)
-            else:
-                display_simulated_info = "text_image"
-                st.info("🖼️ **[靜態截圖模擬中]** 畫面已呈現標準 A4C 切面：左心室內膜邊界呈現球形擴大變形。")
+            img = Image.open(selected_file)
+            st.image(img, caption=f"教師標準教材：{ICM真實範例}", use_container_width=True)
+
+    # 處理文字模擬備援的顯示邏輯
+    elif st.session_state.get("teacher_mode", "") in ["ICM範例影片", "ICM範例圖片"] and not uploaded_file:
+        display_simulated_info = True
+        st.write("## 📊 教師示範教材（去識別化真實案例）")
+        if st.session_state["heart_teacher_mode"] == "ICM範例影片":
+            display_simulated_info = "ICM範例影片"
+            st.info("📺 **[動態影片模擬中]** 畫面上正在流暢播放 Ischemic CM 心尖四腔室影片：可觀察到前壁與心尖 Akinesis（死寂），而基底部代償性 Hyperkinesis 劇烈收縮。")
+        else:
+            display_simulated_info = "ICM範例圖片"
+            st.info("🖼️ **[靜態截圖模擬中]** 畫面已呈現 A4C 切面：左心室內膜邊界極度清晰，呈現顯著的球形擴大變形（Spherical Remodeling）。")
 
 # ========================================================
 # 4. 🚀 啟動真 AI 專家判讀 (串接 API)
 # ========================================================
-# 只要有學員上傳檔案，或是老師啟動了教材（不論是實體檔案還是文字模擬），就允許點擊分析
 if active_media_bytes or display_simulated_info:
     st.write("---")
     st.subheader("Step 3：啟動 AI 判讀")
     
-    if st.button("🚀 傳送給 Gemini 進行真實高階推理分析"):
+    if st.button("🚀 傳送給 Gemini 進行推理分析"):
         
         # 建立專為 5 大指標量身打造的 Prompt 指令
         user_input_text = f"""
@@ -134,7 +154,7 @@ if active_media_bytes or display_simulated_info:
         
         # 如果有讀取到實體檔案（學員上傳或老師的實體教材檔），就把多媒體資料塞進去讓 Gemini 真實看片
         if active_media_bytes and active_mime_type:
-            parts_list.append(types.Part.from_bytes(data=media_bytes, mime_type=active_mime_type))
+            parts_list.append(types.Part.from_bytes(data=active_media_bytes, mime_type=active_mime_type))
         else:
             # 如果是純文字模擬教材，則文字告訴 AI 當前看到的畫面特徵
             if display_simulated_info == "text_video":
