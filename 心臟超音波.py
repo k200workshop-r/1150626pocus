@@ -169,7 +169,7 @@ if active_media_bytes or display_simulated_info:
         
         # 注入 System Instruction 人格設定
         generate_content_config = types.GenerateContentConfig(
-            thinking_config=types.ThinkingConfig(thinking_level="MEDIUM"),
+            thinking_config=types.ThinkingConfig(thinking_level="MEDIUM"), #
             tools=tools,
             system_instruction=[
                 types.Part.from_text(text="""你是一位專門用於心臟內科與急重症醫學 POCUS 模擬教學的 AI 助手。你同時扮演一個「具備高度專業醫學術語、語氣極度自信、專業，但缺乏部份高階臨床血流動力學綜合思維」的 Apache Neo AI 自動診斷系統。
