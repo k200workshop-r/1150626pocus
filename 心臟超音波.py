@@ -53,7 +53,7 @@ display_simulated_info = False
 
 # --- 通道 1：學員現場實測上傳 ---
 with tab1:
-    st.write("學員請上傳 Schallware 模擬器上的Ischemic CM錄影（MP4/MOV）或截圖（JPG/PNG）")
+    st.write("學員請上傳 Schallware 模擬器上的Ischemic CM影片（MP4/MOV）或截圖（JPG/PNG）")
     uploaded_file = st.file_uploader(
         "請上傳或拖曳超音波檔案...", 
         type=["jpg", "png", "jpeg", "mp4", "avi", "mov"],
@@ -89,18 +89,18 @@ with tab2:
     col_btn1, col_btn2 = st.columns(2)
     with col_btn1:
         if st.button("🎬 快速載入：Ischemic CM 動態影片模擬分析"):
-            st.session_state["heart_teacher_mode"] = "mock_video"
+            st.session_state["CV mock"] = "ICM mock video"
     with col_btn2:
-        if st.button("🖼️ 快速載入：Ischemic CM 靜態截圖模擬分析"):
-            st.session_state["heart_teacher_mode"] = "mock_image"
+        if st.button("🖼️ 快速載入：Ischemic CM 靜態影像"):
+            st.session_state["CV mock"] = "ICM mock image"
 
     # 邏輯分流：如果教師有上傳真實多圖，且學員沒傳檔案，就啟用教師的真實教材
     if teacher_files and not uploaded_file:
-        st.session_state["heart_teacher_mode"] = "real_files"
+        st.session_state["CV Aiden"] = "real_files"
         
         # 讓教師能用下拉選單挑選當前要放映與判讀哪一個教材
         file_names = [f.name for f in teacher_files]
-        selected_file_name = st.selectbox("🎯 請選擇目前要放映並請 AI 判讀的教材檔案：", file_names)
+        selected_file_name = st.selectbox("🎯 請選擇目前要放映並請 AI 判讀的教材檔案：", CV Aiden)
         
         # 抓取該檔案並轉為二進位數據
         selected_file = next(f for f in teacher_files if f.name == selected_file_name)
@@ -117,10 +117,10 @@ with tab2:
             st.image(img, caption=f"教師標準教材：{ICM真實範例}", use_container_width=True)
 
     # 處理文字模擬備援的顯示邏輯
-    elif st.session_state.get("teacher_mode", "") in ["ICM範例影片", "ICM範例圖片"] and not uploaded_file:
+    elif st.session_state.get("CV", "") in ["ICM範例影片", "ICM範例圖片"] and not uploaded_file:
         display_simulated_info = True
         st.write("## 📊 教師示範教材（去識別化真實案例）")
-        if st.session_state["heart_teacher_mode"] == "ICM範例影片":
+        if st.session_state["CV"] == "ICM範例影片":
             display_simulated_info = "ICM範例影片"
             st.info("📺 **[動態影片模擬中]** 畫面上正在流暢播放 Ischemic CM 心尖四腔室影片：可觀察到前壁與心尖 Akinesis（死寂），而基底部代償性 Hyperkinesis 劇烈收縮。")
         else:
