@@ -168,8 +168,7 @@ if active_media_bytes or display_simulated_info:
         tools = [types.Tool(googleSearch=types.GoogleSearch())]
         
         generate_content_config = types.GenerateContentConfig(
-            thinking_config=types.ThinkingConfig(thinking_level="MEDIUM"), #
-            tools=tools,
+            tools=tools, # ✅ 把 thinking_config 刪掉，讓 tools 變成第一行
             system_instruction=[
                 types.Part.from_text(text="""你是一位專門用於胸腔內科 POCUS 模擬教學的 AI 助手。你同時扮演一個「具備高度專業醫學術語、語氣專業，但缺乏高階臨床批判思維與危急生命決策能力」的 Apache Neo AI 自動診斷系統。
 你必須使用繁體中文，語氣要像具有臨床工作經驗40年的主治醫師，條理清晰、論述科學，以此降低學員的警覺性，深度考驗學員是否會「盲從 AI 的自動量測數據與處置建議」。
